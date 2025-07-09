@@ -181,10 +181,6 @@
             margin-bottom: 3rem;
         }
 
-        .blog-content-view.active {
-            display: block;
-        }
-
         .back-button {
             background: #21262d;
             color: #58a6ff;
@@ -616,7 +612,7 @@
             
             // Show content view, hide list view
             document.getElementById('blogListView').style.display = 'none';
-            document.getElementById('blogContentView').classList.add('active');
+            document.getElementById('blogContentView').style.display = 'block';
             
             // Update search container visibility
             document.querySelector('.search-container').style.display = 'none';
@@ -628,12 +624,15 @@
         // Show blog list
         function showBlogList() {
             document.getElementById('blogListView').style.display = 'block';
-            document.getElementById('blogContentView').classList.remove('active');
+            document.getElementById('blogContentView').style.display = 'none';
             document.querySelector('.search-container').style.display = 'block';
             
             // Scroll to top
             window.scrollTo(0, 0);
         }
+
+        // Make showBlogList globally accessible
+        window.showBlogList = showBlogList;
 
         // Render blog cards
         function renderBlogs(blogs) {
