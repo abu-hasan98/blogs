@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
+            border-bottom: 1px solid #30363d;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .header-content {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #58a6ff 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #8b949e;
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #c9d1d9;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b949e;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .blog-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-card:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 8px 25px rgba(88, 166, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .blog-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #58a6ff, #7c3aed);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-card:hover::before {
+            opacity: 1;
+        }
+
+        .blog-title {
+            font-size: 1.3rem;
+            color: #58a6ff;
+            margin-bottom: 0.5rem;
+            text-decoration: none;
+            display: block;
+        }
+
+        .blog-title:hover {
+            text-decoration: underline;
+        }
+
+        .blog-excerpt {
+            color: #8b949e;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #6e7681;
+        }
+
+        .blog-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .blog-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #21262d;
+            color: #58a6ff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid #30363d;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #8b949e;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #8b949e;
+        }
+
+        .error {
+            text-align: center;
+            padding: 3rem;
+            color: #f85149;
+        }
+
+        footer {
+            border-top: 1px solid #30363d;
+            padding: 2rem 0;
+            text-align: center;
+            color: #6e7681;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .blog-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>My Blog</h1>
+                <p class="subtitle">Thoughts, tutorials, and insights</p>
+                <div class="search-container">
+                    <input type="text" class="search-box" placeholder="Search blogs..." id="searchInput">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loading" class="loading">Loading blogs...</div>
+        <div id="blogContainer" class="blog-grid" style="display: none;"></div>
+        <div id="noResults" class="no-results" style="display: none;">
+            No blogs found matching your search.
+        </div>
+        <div id="error" class="error" style="display: none;">
+            Error loading blogs. Please try again later.
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 My Blog. Built with GitHub Pages.</p>
+        </div>
+    </footer>
+
+    <script>
+        const GITHUB_USERNAME = 'abu-hasan98';
+        const GITHUB_REPO = 'blogs';
+        const DOCS_FOLDER = 'docs';
+        
+        let allBlogs = [];
+        let filteredBlogs = [];
+
+        // GitHub API function to fetch repository contents
+        async function fetchGitHubContents(path = '') {
+            const url = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${path}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching GitHub contents:', error);
+                return null;
+            }
+        }
+
+        // Fetch markdown file content
+        async function fetchMarkdownContent(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return await response.text();
+            } catch (error) {
+                console.error('Error fetching markdown content:', error);
+                return null;
+            }
+        }
+
+        // Parse markdown frontmatter and content
+        function parseMarkdown(content, filename) {
+            const lines = content.split('\n');
+            let frontmatter = {};
+            let contentStart = 0;
+            
+            // Check if file starts with frontmatter
+            if (lines[0]?.trim() === '---') {
+                let endIndex = -1;
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i].trim() === '---') {
+                        endIndex = i;
+                        break;
+                    }
+                }
+                
+                if (endIndex > 0) {
+                    const frontmatterText = lines.slice(1, endIndex).join('\n');
+                    try {
+                        // Simple YAML parsing for common frontmatter
+                        frontmatterText.split('\n').forEach(line => {
+                            const colonIndex = line.indexOf(':');
+                            if (colonIndex > 0) {
+                                const key = line.substring(0, colonIndex).trim();
+                                const value = line.substring(colonIndex + 1).trim().replace(/^['"]|['"]$/g, '');
+                                frontmatter[key] = value;
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('Error parsing frontmatter:', e);
+                    }
+                    contentStart = endIndex + 1;
+                }
+            }
+            
+            const bodyContent = lines.slice(contentStart).join('\n');
+            
+            // Extract title from first heading if not in frontmatter
+            if (!frontmatter.title) {
+                const titleMatch = bodyContent.match(/^#\s+(.+)$/m);
+                if (titleMatch) {
+                    frontmatter.title = titleMatch[1];
+                }
+            }
+            
+            // Generate excerpt from content
+            const excerpt = bodyContent
+                .replace(/^#.+$/gm, '') // Remove headings
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Remove links
+                .replace(/[*_`]/g, '') // Remove markdown formatting
+                .trim()
+                .substring(0, 200) + '...';
+            
+            return {
+                title: frontmatter.title || filename.replace('.md', ''),
+                excerpt: frontmatter.excerpt || excerpt,
+                date: frontmatter.date || new Date().toISOString().split('T')[0],
+                tags: frontmatter.tags ? frontmatter.tags.split(',').map(tag => tag.trim()) : [],
+                filename: filename,
+                content: bodyContent
+            };
+        }
+
+        // Recursively fetch all markdown files
+        async function fetchAllMarkdownFiles(path = DOCS_FOLDER) {
+            const contents = await fetchGitHubContents(path);
+            if (!contents) return [];
+            
+            const markdownFiles = [];
+            
+            for (const item of contents) {
+                if (item.type === 'file' && item.name.endsWith('.md')) {
+                    const content = await fetchMarkdownContent(item.download_url);
+                    if (content) {
+                        const parsed = parseMarkdown(content, item.name);
+                        parsed.path = item.path;
+                        parsed.url = `https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}/blob/main/${item.path}`;
+                        markdownFiles.push(parsed);
+                    }
+                } else if (item.type === 'dir') {
+                    // Recursively search subdirectories
+                    const subFiles = await fetchAllMarkdownFiles(item.path);
+                    markdownFiles.push(...subFiles);
+                }
+            }
+            
+            return markdownFiles;
+        }
+
+        // Render blog cards
+        function renderBlogs(blogs) {
+            const container = document.getElementById('blogContainer');
+            
+            if (blogs.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                container.style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('noResults').style.display = 'none';
+            container.style.display = 'grid';
+            
+            container.innerHTML = blogs.map(blog => `
+                <div class="blog-card" onclick="window.open('${blog.url}', '_blank')">
+                    <h2 class="blog-title">${blog.title}</h2>
+                    <p class="blog-excerpt">${blog.excerpt}</p>
+                    <div class="blog-meta">
+                        <div class="blog-date">
+                            <span>📅</span>
+                            <span>${new Date(blog.date).toLocaleDateString()}</span>
+                        </div>
+                        <div class="blog-tags">
+                            ${blog.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Search functionality
+        function searchBlogs(query) {
+            if (!query.trim()) {
+                filteredBlogs = allBlogs;
+            } else {
+                const searchTerm = query.toLowerCase();
+                filteredBlogs = allBlogs.filter(blog => 
+                    blog.title.toLowerCase().includes(searchTerm) ||
+                    blog.excerpt.toLowerCase().includes(searchTerm) ||
+                    blog.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+            }
+            renderBlogs(filteredBlogs);
+        }
+
+        // Initialize the blog
+        async function initializeBlog() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('error').style.display = 'none';
+                
+                allBlogs = await fetchAllMarkdownFiles();
+                
+                // Sort blogs by date (newest first)
+                allBlogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                filteredBlogs = allBlogs;
+                renderBlogs(filteredBlogs);
+                
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                console.error('Error initializing blog:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchBlogs(e.target.value);
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeBlog);
+    </script>
+</body>
+</html>
