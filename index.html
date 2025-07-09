@@ -169,6 +169,167 @@
             border: 1px solid #30363d;
         }
 
+        /* Blog Content View Styles */
+        .blog-content-view {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+        }
+
+        .blog-content-view.active {
+            display: block;
+        }
+
+        .back-button {
+            background: #21262d;
+            color: #58a6ff;
+            border: 1px solid #30363d;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-button:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        .blog-content-title {
+            font-size: 2.5rem;
+            color: #58a6ff;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .blog-content-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #30363d;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            color: #6e7681;
+        }
+
+        .blog-content-body {
+            line-height: 1.8;
+        }
+
+        .blog-content-body h1,
+        .blog-content-body h2,
+        .blog-content-body h3,
+        .blog-content-body h4,
+        .blog-content-body h5,
+        .blog-content-body h6 {
+            color: #c9d1d9;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .blog-content-body h1 {
+            font-size: 2rem;
+            border-bottom: 1px solid #30363d;
+            padding-bottom: 0.5rem;
+        }
+
+        .blog-content-body h2 {
+            font-size: 1.7rem;
+        }
+
+        .blog-content-body h3 {
+            font-size: 1.4rem;
+        }
+
+        .blog-content-body p {
+            margin-bottom: 1rem;
+            color: #c9d1d9;
+        }
+
+        .blog-content-body ul,
+        .blog-content-body ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-content-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-content-body code {
+            background: #21262d;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+        }
+
+        .blog-content-body pre {
+            background: #21262d;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid #30363d;
+        }
+
+        .blog-content-body pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .blog-content-body blockquote {
+            border-left: 4px solid #58a6ff;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .blog-content-body a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        .blog-content-body a:hover {
+            text-decoration: underline;
+        }
+
+        .blog-content-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .blog-content-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .blog-content-body th,
+        .blog-content-body td {
+            border: 1px solid #30363d;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        .blog-content-body th {
+            background: #21262d;
+            color: #58a6ff;
+        }
+
         .loading {
             text-align: center;
             padding: 3rem;
@@ -208,6 +369,20 @@
                 align-items: flex-start;
                 gap: 0.5rem;
             }
+
+            .blog-content-view {
+                padding: 1rem;
+            }
+
+            .blog-content-title {
+                font-size: 2rem;
+            }
+
+            .blog-content-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -227,10 +402,31 @@
 
     <main class="container">
         <div id="loading" class="loading">Loading blogs...</div>
-        <div id="blogContainer" class="blog-grid" style="display: none;"></div>
-        <div id="noResults" class="no-results" style="display: none;">
-            No blogs found matching your search.
+        
+        <!-- Blog List View -->
+        <div id="blogListView">
+            <div id="blogContainer" class="blog-grid" style="display: none;"></div>
+            <div id="noResults" class="no-results" style="display: none;">
+                No blogs found matching your search.
+            </div>
         </div>
+
+        <!-- Blog Content View -->
+        <div id="blogContentView" class="blog-content-view">
+            <button class="back-button" onclick="showBlogList()">
+                ← Back to Blog List
+            </button>
+            <h1 class="blog-content-title" id="contentTitle"></h1>
+            <div class="blog-content-meta">
+                <div class="blog-date">
+                    <span>📅</span>
+                    <span id="contentDate"></span>
+                </div>
+                <div class="blog-tags" id="contentTags"></div>
+            </div>
+            <div class="blog-content-body" id="contentBody"></div>
+        </div>
+
         <div id="error" class="error" style="display: none;">
             Error loading blogs. Please try again later.
         </div>
@@ -249,6 +445,7 @@
         
         let allBlogs = [];
         let filteredBlogs = [];
+        let currentBlog = null;
 
         // GitHub API function to fetch repository contents
         async function fetchGitHubContents(path = '') {
@@ -273,6 +470,46 @@
                 console.error('Error fetching markdown content:', error);
                 return null;
             }
+        }
+
+        // Simple markdown to HTML converter
+        function markdownToHtml(markdown) {
+            let html = markdown;
+            
+            // Headers
+            html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+            
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Inline code
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Code blocks
+            html = html.replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
+            
+            // Links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            
+            // Images
+            html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">');
+            
+            // Line breaks and paragraphs
+            html = html.replace(/\n\n/g, '</p><p>');
+            html = html.replace(/\n/g, '<br>');
+            html = '<p>' + html + '</p>';
+            
+            // Fix empty paragraphs
+            html = html.replace(/<p><\/p>/g, '');
+            html = html.replace(/<p><br>/g, '<p>');
+            html = html.replace(/<br><\/p>/g, '</p>');
+            
+            return html;
         }
 
         // Parse markdown frontmatter and content
@@ -334,7 +571,8 @@
                 date: frontmatter.date || new Date().toISOString().split('T')[0],
                 tags: frontmatter.tags ? frontmatter.tags.split(',').map(tag => tag.trim()) : [],
                 filename: filename,
-                content: bodyContent
+                content: bodyContent,
+                htmlContent: markdownToHtml(bodyContent)
             };
         }
 
@@ -364,6 +602,39 @@
             return markdownFiles;
         }
 
+        // Show blog content
+        function showBlogContent(blog) {
+            currentBlog = blog;
+            
+            // Update content
+            document.getElementById('contentTitle').textContent = blog.title;
+            document.getElementById('contentDate').textContent = new Date(blog.date).toLocaleDateString();
+            document.getElementById('contentTags').innerHTML = blog.tags.map(tag => 
+                `<span class="tag">${tag}</span>`
+            ).join('');
+            document.getElementById('contentBody').innerHTML = blog.htmlContent;
+            
+            // Show content view, hide list view
+            document.getElementById('blogListView').style.display = 'none';
+            document.getElementById('blogContentView').classList.add('active');
+            
+            // Update search container visibility
+            document.querySelector('.search-container').style.display = 'none';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Show blog list
+        function showBlogList() {
+            document.getElementById('blogListView').style.display = 'block';
+            document.getElementById('blogContentView').classList.remove('active');
+            document.querySelector('.search-container').style.display = 'block';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
         // Render blog cards
         function renderBlogs(blogs) {
             const container = document.getElementById('blogContainer');
@@ -378,7 +649,7 @@
             container.style.display = 'grid';
             
             container.innerHTML = blogs.map(blog => `
-                <div class="blog-card" onclick="window.open('${blog.url}', '_blank')">
+                <div class="blog-card" onclick="showBlogContent(${blogs.indexOf(blog)})">
                     <h2 class="blog-title">${blog.title}</h2>
                     <p class="blog-excerpt">${blog.excerpt}</p>
                     <div class="blog-meta">
@@ -393,6 +664,14 @@
                 </div>
             `).join('');
         }
+
+        // Update the showBlogContent function to work with the rendered blogs
+        window.showBlogContent = function(index) {
+            const blog = filteredBlogs[index];
+            if (blog) {
+                showBlogContent(blog);
+            }
+        };
 
         // Search functionality
         function searchBlogs(query) {
